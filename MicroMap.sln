@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroMap", "src\MicroMap\MicroMap.csproj", "{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroMap.UnitTest", "src\MicroMap.Test\MicroMap.UnitTest.csproj", "{4C28410E-E151-45DA-A3B7-8EBF20F79304}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C28410E-E151-45DA-A3B7-8EBF20F79304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C28410E-E151-45DA-A3B7-8EBF20F79304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C28410E-E151-45DA-A3B7-8EBF20F79304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C28410E-E151-45DA-A3B7-8EBF20F79304}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67A0A3CB-59FD-43F8-816E-2FF18F0AF727}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A7CF7CE8-26F3-4328-867E-FADDB43C26DA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MicroMap</RootNamespace>
+    <AssemblyName>MicroMap</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CompiledQuery.cs" />
+    <Compile Include="ComponentContainer.cs" />
+    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="DatabaseContext.cs" />
+    <Compile Include="ExecutionContext.cs" />
+    <Compile Include="ExecutionKernel.cs" />
+    <Compile Include="IDatabaseContext.cs" />
+    <Compile Include="IExecutionContext.cs" />
+    <Compile Include="IExecutionKernel.cs" />
+    <Compile Include="IQueryCompiler.cs" />
+    <Compile Include="IQueryComponent.cs" />
+    <Compile Include="IQueryContext.cs" />
+    <Compile Include="TMP\Diagnostics\LoggerCategory.cs" />
+    <Compile Include="TMP\Diagnostics\LoggerFactory.cs" />
+    <Compile Include="TMP\Mapper\DataReaderExtensions.cs" />
+    <Compile Include="TMP\Mapper\IEnumerableExtensions.cs" />
+    <Compile Include="TMP\Mapper\InstanceFactory.cs" />
+    <Compile Include="TMP\Mapper\InvalidMapException.cs" />
+    <Compile Include="TMP\Mapper\ObjectExtensions.cs" />
+    <Compile Include="TMP\Mapper\ObjectMapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryCompiler.cs" />
+    <Compile Include="QueryComponent.cs" />
+    <Compile Include="QueryContext.cs" />
+    <Compile Include="Reader\DataReaderContext.cs" />
+    <Compile Include="TMP\Diagnostics\ILoggerFactory.cs" />
+    <Compile Include="TMP\Diagnostics\ILogWriter.cs" />
+    <Compile Include="TMP\Diagnostics\LogDelegate.cs" />
+    <Compile Include="TMP\Mapper\ReaderResult.cs" />
+    <Compile Include="TMP\Mapper\RestrictiveMode.cs" />
+    <Compile Include="TMP\Settings.cs" />
+    <Compile Include="TMP\TypeDefinition\FieldDefinition.cs" />
+    <Compile Include="TMPSQL\Sql\BaseDialectProvider.cs" />
+    <Compile Include="TMPSQL\CustomConfiguration.cs" />
+    <Compile Include="TMPSQL\Sql\DialectProvider.cs" />
+    <Compile Include="TMPSQL\Sql\EnumMemberAccess.cs" />
+    <Compile Include="TMPSQL\Sql\ISqlString.cs" />
+    <Compile Include="TMPSQL\Sql\LambdaToSqlCompiler.cs" />
+    <Compile Include="TMPSQL\Sql\PartialSqlString.cs" />
+    <Compile Include="IDataReaderContext.cs" />
+    <Compile Include="TMP\TypeDefinition\PropertyExtensions.cs" />
+    <Compile Include="TMP\TypeDefinition\TypeDefinitionFactory.cs" />
+    <Compile Include="TMP\TypeDefinition\TypeExtensions.cs" />
+    <Compile Include="TMPSQL\TypeExtensionsForLambdaExpressionConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TMPSQL\Factories\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

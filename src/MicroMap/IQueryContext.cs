@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace MicroMap
 {
@@ -16,7 +17,7 @@ namespace MicroMap
 
         IEnumerable<T1> Select<T1>();
 
-        IEnumerable<T1> Select<T1>(Func<T, T1> expression);
+        IEnumerable<T1> Select<T1>(Expression<Func<T, T1>> expression);
 
         IEnumerable<T1> Select<T1>(Func<T, object> expression);
 

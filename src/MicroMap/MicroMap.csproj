@@ -70,6 +70,7 @@
     <Compile Include="TMP\Diagnostics\LogDelegate.cs" />
     <Compile Include="TMP\Mapper\ReaderResult.cs" />
     <Compile Include="TMP\Mapper\RestrictiveMode.cs" />
+    <Compile Include="TMP\Mapper\TypeExtensions.cs" />
     <Compile Include="TMP\Settings.cs" />
     <Compile Include="TMP\TypeDefinition\FieldDefinition.cs" />
     <Compile Include="TMPSQL\Sql\BaseDialectProvider.cs" />

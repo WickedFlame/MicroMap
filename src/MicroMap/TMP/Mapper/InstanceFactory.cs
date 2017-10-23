@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
-using MicroMap.TypeDefinition;
 
 namespace MicroMap.Mapper
 {
@@ -55,9 +51,7 @@ namespace MicroMap.Mapper
 
             return row;
         }
-
-        #region Constructor Delegate generation methods
-
+        
         private static EmptyConstructorDelegate GetConstructorMethodToCache(Type type)
         {
             if (type.IsInterface)
@@ -91,7 +85,9 @@ namespace MicroMap.Mapper
                 var genericArgs = type.GetGenericArguments();
                 var typeArgs = new Type[genericArgs.Length];
                 for (var i = 0; i < genericArgs.Length; i++)
+                {
                     typeArgs[i] = typeof(object);
+                }
 
                 var realizedType = type.MakeGenericType(typeArgs);
                 return realizedType.CreateInstance;
@@ -142,9 +138,7 @@ namespace MicroMap.Mapper
 
             return emptyConstructorFunction;
         }
-
-        #endregion
-
+        
         #region Internal Classes
 
         /// <summary>
@@ -159,56 +153,6 @@ namespace MicroMap.Mapper
             {
                 EmptyConstructorFunction = GetConstructorMethodToCache(typeof(T));
             }
-        }
-
-        #endregion
-
-        #region Extension Methods
-
-        public static ConstructorInfo GetEmptyConstructor(this Type type)
-        {
-            return type.GetConstructor(Type.EmptyTypes);
-        }
-
-        public static bool HasGenericType(this Type type)
-        {
-            while (type != null)
-            {
-                if (type.IsGenericType)
-                    return true;
-
-                type = type.BaseType;
-            }
-            return false;
-        }
-
-        [DebuggerStepThrough]
-        public static bool IsAnonymousType(this Type type)
-        {
-            if (type == null)
-                throw new ArgumentNullException("type");
-
-            // HACK: The only way to detect anonymous types right now.
-            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
-                && type.IsGenericType && type.Name.Contains("AnonymousType")
-                && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
-                && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
-        }
-
-        public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
-        {
-            foreach (var genericTypeDefinition in genericTypeDefinitions)
-            {
-                var genericType = type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition);
-                if (genericType == null && type == genericTypeDefinition)
-                {
-                    genericType = type;
-                }
-
-                if (genericType != null)
-                    return genericType;
-            }
-            return null;
         }
 
         #endregion

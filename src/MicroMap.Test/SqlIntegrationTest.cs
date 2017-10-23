@@ -195,6 +195,38 @@ namespace MicroMap.Test
             }
         }
 
+        [Test]
+        public void SqlIntegration_Mock_Reader_Sample_Select_String()
+        {
+            var warrior = new
+            {
+                ID = 1,
+                Name = "Olaf",
+                WeaponID = 1,
+                Race = "Elf"
+            };
+
+            var warriors = new[]
+            {
+                warrior
+            }.ToList();
+
+            var executor = new Mock<IExecutionContext>();
+            executor.Setup(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as ID FROM Warrior"))).Returns(() => new DataReaderContext(new MockedDataReader(warriors, warrior.GetType())));
+            
+            var provider = new DatabaseConnection();
+            using (var context = provider.Open())
+            {
+                context.ExecutionContext = executor.Object;
+
+                var result = context.From<Warrior>().Select<Warrior2>("MAX(ID) as ID");
+                Assert.That(result.First().ID == warrior.ID);
+                Assert.That(result.First().Name == warrior.Name);
+
+                Assert.IsInstanceOf<Warrior2>(result.First());
+            }
+        }
+
         public class Warrior
         {
             public int ID { get; set; }

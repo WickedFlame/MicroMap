@@ -1,11 +1,9 @@
-﻿using MicroMap.TMP;
+﻿using MicroMap.TMP.Sql;
 using MicroMap.TypeDefinition;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace MicroMap
 {
@@ -112,9 +110,15 @@ namespace MicroMap
             return Kernel.Execute<T1>(Components);
         }
 
-        public IEnumerable<T1> Select<T1>(Func<T, T1> expression)
+        public IEnumerable<T1> Select<T1>(Expression<Func<T, T1>> expression)
         {
-            throw new NotImplementedException();
+            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
+            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+
+            var fields = LambdaToSqlCompiler.Compile(expression);
+            Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+
+            return Kernel.Execute<T1>(Components);
         }
 
         public IEnumerable<T1> Select<T1>(Func<T, object> expression)
@@ -124,7 +128,12 @@ namespace MicroMap
 
         public IEnumerable<T1> Select<T1>(string expression)
         {
-            throw new NotImplementedException();
+            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
+            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+            
+            Add(new QueryComponent(SyntaxComponent.FieldList, expression));
+
+            return Kernel.Execute<T1>(Components);
         }
 
         public T Single()

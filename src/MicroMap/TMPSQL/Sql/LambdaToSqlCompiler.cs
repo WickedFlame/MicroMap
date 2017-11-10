@@ -41,7 +41,7 @@ namespace MicroMap.TMP.Sql
         readonly string _separator = " ";
 
         //TODO: useFieldName has to be set as an option!
-        readonly bool _useFieldName = true;
+        //readonly bool _useFieldName = true;
         private Dictionary<Type, string> _aliasMap;
 
         public bool PrefixFieldWithTableName { get; set; }
@@ -190,18 +190,18 @@ namespace MicroMap.TMP.Sql
                     right = Compile(expression.Right);
                 }
 
-                if (left as PartialSqlString == null && right as PartialSqlString == null)
+                if (!(left is PartialSqlString) && !(right is PartialSqlString))
                 {
                     var result = Expression.Lambda(expression).Compile().DynamicInvoke();
                     return new PartialSqlString(DialectProvider.Instance.GetQuotedValue(result, result.GetType()));
                 }
 
-                if (left as PartialSqlString == null)
+                if (!(left is PartialSqlString))
                 {
                     left = ((bool)left) ? GetTrueExpression() : GetFalseExpression();
                 }
 
-                if (right as PartialSqlString == null)
+                if (!(right is PartialSqlString))
                 {
                     right = ((bool)right) ? GetTrueExpression() : GetFalseExpression();
                 }
@@ -232,16 +232,16 @@ namespace MicroMap.TMP.Sql
                         left = ConvertToEnum(rightEnum.EnumType, left.ToString(), left);
                     }
                 }
-                else if (left as PartialSqlString == null && right as PartialSqlString == null)
+                else if (!(left is PartialSqlString) && !(right is PartialSqlString))
                 {
                     var result = Expression.Lambda(expression).Compile().DynamicInvoke();
                     return result;
                 }
-                else if (left as PartialSqlString == null)
+                else if (!(left is PartialSqlString))
                 {
                     left = DialectProvider.Instance.GetQuotedValue(left, left != null ? left.GetType() : null);
                 }
-                else if (right as PartialSqlString == null)
+                else if (!(right is PartialSqlString))
                 {
                     right = DialectProvider.Instance.GetQuotedValue(right, right != null ? right.GetType() : null);
                 }
@@ -284,7 +284,7 @@ namespace MicroMap.TMP.Sql
                 case ExpressionType.Not:
                     var o = Compile(u.Operand);
 
-                    if (o as PartialSqlString == null)
+                    if (!(o is PartialSqlString))
                     {
                         return !((bool)o);
                     }
@@ -555,32 +555,32 @@ namespace MicroMap.TMP.Sql
             }
         }
 
-        protected virtual string GetQuotedColumnName(IEnumerable<FieldDefinition> tableDef, string memberName)
+        protected virtual string GetQuotedColumnName(IEnumerable<FieldDefinition> tableDef, string fieldName)
         {
-            if (_useFieldName)
+            //if (_useFieldName)
+            //{
+            var fd = tableDef.FirstOrDefault(x => x.FieldName == fieldName);
+            //var fieldName = fd != null ? fd.FieldName : memberName;
+
+            // get the prefix from the maptable
+            var id = string.Empty;
+            if (!_aliasMap.TryGetValue(fd.EntityType, out id))
             {
-                var fd = tableDef.FirstOrDefault(x => x.MemberName == memberName);
-                var fieldName = fd != null ? fd.FieldName : memberName;
-
-                // get the prefix from the maptable
-                var id = string.Empty;
-                if (!_aliasMap.TryGetValue(fd.EntityType, out id))
-                {
-                    id = fd.EntityName;
-                }
-
-                // set the entityname as prefix
-                if (string.IsNullOrEmpty(id))
-                {
-                    id = fd.EntityName;
-                }
-
-                return PrefixFieldWithTableName
-                    ? DialectProvider.Instance.GetQuotedColumnName(id, fieldName)
-                    : DialectProvider.Instance.GetQuotedColumnName(fieldName);
+                id = fd.EntityName;
             }
 
-            return memberName;
+            //// set the entityname as prefix
+            //if (string.IsNullOrEmpty(id))
+            //{
+            //    id = fd.EntityName;
+            //}
+
+            return PrefixFieldWithTableName
+                ? DialectProvider.Instance.GetQuotedColumnName(id, fieldName)
+                : DialectProvider.Instance.GetQuotedColumnName(fieldName);
+            //}
+
+            //return memberName;
         }
 
         protected PartialSqlString GetTrueExpression()
@@ -711,7 +711,7 @@ namespace MicroMap.TMP.Sql
 
         protected virtual bool IsColumnAccess(MethodCallExpression m)
         {
-            if (m.Object != null && m.Object as MethodCallExpression != null)
+            if (m.Object != null && m.Object is MethodCallExpression)
             {
                 return IsColumnAccess(m.Object as MethodCallExpression);
             }

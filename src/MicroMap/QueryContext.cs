@@ -175,5 +175,14 @@ namespace MicroMap
         {
             throw new NotImplementedException();
         }
+
+
+
+
+        /// EXPERIMENTAL
+        public IQueryContext<T, T1> Join<T1>(Func<T, T1, object> func)
+        {
+            throw new NotImplementedException("EXPERIMENTAL!!");
+        }
     }
 }

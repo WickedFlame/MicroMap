@@ -63,6 +63,7 @@
     <Compile Include="DatabaseContextTests.cs" />
     <Compile Include="DatabaseConnectionTests.cs" />
     <Compile Include="ExecutionKernelTests.cs" />
+    <Compile Include="Mapper\InstanceFactoryTests.cs" />
     <Compile Include="QueryCompilerTests.cs" />
     <Compile Include="QueryContextOfTTests.cs" />
     <Compile Include="QueryContextTests.cs" />

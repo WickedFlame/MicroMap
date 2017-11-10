@@ -15,7 +15,7 @@ namespace MicroMap.Mapper
     /// </summary>
     internal static class InstanceFactory
     {
-        static Dictionary<Type, EmptyConstructorDelegate> constructorMethods = new Dictionary<Type, EmptyConstructorDelegate>();
+        static Dictionary<Type, EmptyConstructorDelegate> _constructorMethods = new Dictionary<Type, EmptyConstructorDelegate>();
 
         /// <summary>
         /// Factory Method that creates an instance of type T
@@ -26,17 +26,7 @@ namespace MicroMap.Mapper
         {
             return (T)ConstructorProvider<T>.EmptyConstructorFunction();
         }
-
-        internal static object CreateInstance(this Type type)
-        {
-            if (type == null)
-            {
-                return null;
-            }
-
-            return GetConstructorMethod(type).Invoke();
-        }
-
+        
         /// <summary>
         /// Anonymous objects have a constructor that accepts all arguments in the same order as defined
         /// To populate a anonymous object the data has to be passed in the same order as defined to the constructor
@@ -46,10 +36,7 @@ namespace MicroMap.Mapper
         /// <returns>An instance of an anonymous object T</returns>
         public static T CreateAnonymousObject<T>(IEnumerable<object> args)
         {
-            // create a instance an inject the data
-            var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
-
-            return row;
+            return (T)Activator.CreateInstance(typeof(T), args.ToArray());
         }
         
         private static EmptyConstructorDelegate GetConstructorMethodToCache(Type type)
@@ -108,17 +95,27 @@ namespace MicroMap.Mapper
 
             if (type == typeof(string))
             {
-                return () => String.Empty;
+                return () => string.Empty;
             }
 
             // Anonymous types don't have empty constructors
             return () => FormatterServices.GetUninitializedObject(type);
         }
 
+        private static object CreateInstance(this Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            return GetConstructorMethod(type).Invoke();
+        }
+
         private static EmptyConstructorDelegate GetConstructorMethod(Type type)
         {
             EmptyConstructorDelegate emptyConstructorFunction;
-            if (constructorMethods.TryGetValue(type, out emptyConstructorFunction))
+            if (_constructorMethods.TryGetValue(type, out emptyConstructorFunction))
             {
                 return emptyConstructorFunction;
             }
@@ -130,11 +127,11 @@ namespace MicroMap.Mapper
 
             do
             {
-                snapshot = constructorMethods;
-                newCache = new Dictionary<Type, EmptyConstructorDelegate>(constructorMethods);
+                snapshot = _constructorMethods;
+                newCache = new Dictionary<Type, EmptyConstructorDelegate>(_constructorMethods);
                 newCache[type] = emptyConstructorFunction;
             } 
-            while (!ReferenceEquals(Interlocked.CompareExchange(ref constructorMethods, newCache, snapshot), snapshot));
+            while (!ReferenceEquals(Interlocked.CompareExchange(ref _constructorMethods, newCache, snapshot), snapshot));
 
             return emptyConstructorFunction;
         }

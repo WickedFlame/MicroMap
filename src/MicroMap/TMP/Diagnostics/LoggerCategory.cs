@@ -7,7 +7,7 @@ namespace MicroMap.Diagnostics
 
         public const string ExceptionDetail = "ExceptionDetail";
 
-        public const string Query = "Query";
+        //public const string Query = "Query";
 
         public const string DataMap = "DataMap";
     }

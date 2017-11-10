@@ -30,7 +30,7 @@ namespace MicroMap
 
     public class Settings : ISettings
     {
-        private Lazy<ILoggerFactory> _loggerFactory;
+        private readonly Lazy<ILoggerFactory> _loggerFactory;
 
         public Settings()
         {

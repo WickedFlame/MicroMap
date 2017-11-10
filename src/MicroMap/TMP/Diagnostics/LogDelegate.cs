@@ -31,14 +31,14 @@ namespace MicroMap.Diagnostics
             }
         }
 
-        internal static void TraceLine(string message)
-        {
-            Trace.WriteLine(message);
-        }
+        //internal static void TraceLine(string message)
+        //{
+        //    Trace.WriteLine(message);
+        //}
 
-        internal static void TraceLine(string message, params string[] args)
-        {
-            Trace.WriteLine(string.Format(message, args));
-        }
+        //internal static void TraceLine(string message, params string[] args)
+        //{
+        //    Trace.WriteLine(string.Format(message, args));
+        //}
     }
 }

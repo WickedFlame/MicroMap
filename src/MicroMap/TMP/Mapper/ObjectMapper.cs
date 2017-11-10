@@ -36,7 +36,7 @@ namespace MicroMap.Mapper
         /// <param name="reader">The datareader with the result</param>
         /// <param name="fields">The fields to map to</param>
         /// <returns></returns>
-        public IEnumerable<T> Map<T>(IDataReader reader, FieldDefinition[] fields)
+        private IEnumerable<T> Map<T>(IDataReader reader, FieldDefinition[] fields)
         {
             var rows = new List<T>();
             if (reader == null)
@@ -154,7 +154,7 @@ namespace MicroMap.Mapper
         /// </summary>
         /// <param name="reader">The datareader</param>
         /// <returns>A ReaderResult containing all returned data</returns>
-        public ReaderResult Map(IDataReader reader)
+        private ReaderResult Map(IDataReader reader)
         {
             var result = new ReaderResult();
 
@@ -184,7 +184,7 @@ namespace MicroMap.Mapper
         /// <param name="fieldDefinitions">The definitions of the fields to populate</param>
         /// <param name="indexCache">The collection that matches the field names with the index in the datareader</param>
         /// <returns>A object containing the data from the datareader</returns>
-        public T ReadData<T>(IDataReader reader, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
+        private T ReadData<T>(IDataReader reader, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
         {
             var instance = InstanceFactory.CreateInstance<T>();
 
@@ -195,19 +195,19 @@ namespace MicroMap.Mapper
                     int index;
                     if (indexCache != null)
                     {
-                        if (!indexCache.TryGetValue(fieldDefinition.MemberName, out index))
+                        if (!indexCache.TryGetValue(fieldDefinition.FieldName, out index))
                         {
                             // try to get the index using case insensitive search on the datareader
                             index = reader.GetIndex(fieldDefinition.FieldName);
-                            indexCache.Add(fieldDefinition.MemberName, index);
+                            indexCache.Add(fieldDefinition.FieldName, index);
 
                             if (index < 0)
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType.Name}.{fieldDefinition.MemberName}");
-                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the result of the IDataReader.");
-                                sb.AppendLine($"The Member {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
-                                sb.AppendLine($"The Member {fieldDefinition.EntityType.Name}.{fieldDefinition.MemberName} should be marked as ignored in the Querydefinition.");
+                                sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType.Name}.{fieldDefinition.FieldName}");
+                                sb.AppendLine($"There is no Field with the name {fieldDefinition.FieldName} contained in the result of the IDataReader.");
+                                sb.AppendLine($"The Member {fieldDefinition.FieldName} will be ignored when mapping the data to the objects.");
+                                //sb.AppendLine($"The Member {fieldDefinition.EntityType.Name}.{fieldDefinition.FieldName} should be marked as ignored in the Querydefinition.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
@@ -221,11 +221,11 @@ namespace MicroMap.Mapper
                                     {
                                         if (reader.GetIndex(tmpDef.FieldName) < 0)
                                         {
-                                            sb.AppendLine($"{tmpDef.EntityType.Name}.{tmpDef.MemberName}");
+                                            sb.AppendLine($"{tmpDef.EntityType.Name}.{tmpDef.FieldName}");
                                         }
                                     }
 
-                                    throw new InvalidMapException(sb.ToString(), fieldDefinition.MemberType, fieldDefinition.MemberName);
+                                    throw new InvalidMapException(sb.ToString(), fieldDefinition.FieldType, fieldDefinition.FieldName);
                                 }
                             }
                         }
@@ -256,16 +256,16 @@ namespace MicroMap.Mapper
             return instance;
         }
 
-        private T ReadData<T>(DataRow result, IEnumerable<FieldDefinition> fields)
-        {
-            var instance = InstanceFactory.CreateInstance<T>();
-            foreach (var field in fields)
-            {
-                SetValue(result, field, instance);
-            }
+        //private T ReadData<T>(DataRow result, IEnumerable<FieldDefinition> fields)
+        //{
+        //    var instance = InstanceFactory.CreateInstance<T>();
+        //    foreach (var field in fields)
+        //    {
+        //        SetValue(result, field, instance);
+        //    }
 
-            return instance;
-        }
+        //    return instance;
+        //}
 
         /// <summary>
         /// Populates row fields during re-hydration of results.
@@ -299,62 +299,62 @@ namespace MicroMap.Mapper
             }
         }
 
-        private void SetValue<T>(DataRow result, FieldDefinition field, T instance)
-        {
-            if (!result.ContainsField(field.FieldName))
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName} from Field in Query {field.FieldName}");
-                sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet.");
-                sb.AppendLine($"The Member {field.MemberName} will be ignored when mapping the data to the objects.");
-                sb.AppendLine($"The Member {field.EntityType.Name}.{field.MemberName} should be marked as ignored in the Querydefinition.");
+        //private void SetValue<T>(DataRow result, FieldDefinition field, T instance)
+        //{
+        //    if (!result.ContainsField(field.FieldName))
+        //    {
+        //        var sb = new StringBuilder();
+        //        sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName} from Field in Query {field.FieldName}");
+        //        sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet.");
+        //        sb.AppendLine($"The Member {field.MemberName} will be ignored when mapping the data to the objects.");
+        //        sb.AppendLine($"The Member {field.EntityType.Name}.{field.MemberName} should be marked as ignored in the Querydefinition.");
 
-                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
-                {
-                    Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
-                }
+        //        if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
+        //        {
+        //            Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
+        //        }
 
-                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
-                {
-                    sb.AppendLine($"Field that will be ignored: {field.EntityType.Name}.{field.MemberName}");
+        //        if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
+        //        {
+        //            sb.AppendLine($"Field that will be ignored: {field.EntityType.Name}.{field.MemberName}");
 
-                    throw new InvalidMapException(sb.ToString(), field.MemberType, field.MemberName);
-                }
+        //            throw new InvalidMapException(sb.ToString(), field.MemberType, field.MemberName);
+        //        }
 
-                return;
-            }
+        //        return;
+        //    }
 
-            // get the Field and map to Member
-            var value = result[field.FieldName];
-            if (value == null)
-            {
-                return;
-            }
+        //    // get the Field and map to Member
+        //    var value = result[field.FieldName];
+        //    if (value == null)
+        //    {
+        //        return;
+        //    }
 
-            var converted = ConvertValue(value, field);
-            if (converted == null)
-            {
-                return;
-            }
+        //    var converted = ConvertValue(value, field);
+        //    if (converted == null)
+        //    {
+        //        return;
+        //    }
 
-            try
-            {
-                field.SetValueFunction(instance, converted);
-            }
-            catch (NullReferenceException ex)
-            {
-                Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-            }
-            catch (InvalidCastException invalidCast)
-            {
-                string tmpValue = value != null ? value.ToString() : "NULL";
+        //    try
+        //    {
+        //        field.SetValueFunction(instance, converted);
+        //    }
+        //    catch (NullReferenceException ex)
+        //    {
+        //        Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+        //    }
+        //    catch (InvalidCastException invalidCast)
+        //    {
+        //        string tmpValue = value != null ? value.ToString() : "NULL";
 
-                var sb = new StringBuilder();
-                sb.AppendLine($"The value {tmpValue} could not be cast to the desired type.");
-                sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
-                throw new InvalidCastException(sb.ToString(), invalidCast);
-            }
-        }
+        //        var sb = new StringBuilder();
+        //        sb.AppendLine($"The value {tmpValue} could not be cast to the desired type.");
+        //        sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
+        //        throw new InvalidCastException(sb.ToString(), invalidCast);
+        //    }
+        //}
 
         private object GetValue(IDataReader reader, int columnIndex)
         {
@@ -389,7 +389,7 @@ namespace MicroMap.Mapper
                 }
                 else
                 {
-                    fieldDefinition.SetValueFunction(instance, fieldDefinition.MemberType.GetDefaultValue());
+                    fieldDefinition.SetValueFunction(instance, fieldDefinition.FieldType.GetDefaultValue());
                 }
 
                 return true;
@@ -402,20 +402,20 @@ namespace MicroMap.Mapper
         {
             // try to convert the value to the value that the destination type has.
             // if the destination type is named same as the source (table) type it can be that the types don't match
-            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.MemberType);
+            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
 
-            // try to convert to the source type inside the original table.
-            // this type is not necessarily the same as the destination typ if a converter is used
-            if (convertedValue == null && field.FieldType != field.MemberType)
-            {
-                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
-            }
+            //// try to convert to the source type inside the original table.
+            //// this type is not necessarily the same as the destination typ if a converter is used
+            //if (convertedValue == null && field.FieldType != field.MemberType)
+            //{
+            //    convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
+            //}
 
             // if still no match than just pass the db value and hope it works...
             if (convertedValue == null && !databaseValue.IsDBNull())
             {
                 string tmpValue = databaseValue == null ? "NULL" : databaseValue.IsDBNull() ? "DBNull" : databaseValue.ToString();
-                Logger.Write($"Cannot convert value {tmpValue} from type {field.FieldType.Name} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write($"Cannot convert value {tmpValue} from type {field.FieldType.Name} to type {field.FieldName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
                 convertedValue = databaseValue.IsDBNull() ? null : databaseValue;
             }
 
@@ -476,11 +476,15 @@ namespace MicroMap.Mapper
 
                     case TypeCode.UInt64:
                         if (value is ulong)
+                        {
                             return value;
+                        }
 
                         var byteValue = value as byte[];
                         if (byteValue != null)
+                        {
                             return ConvertToULong(byteValue);
+                        }
 
                         return Convert.ToUInt64(value);
 

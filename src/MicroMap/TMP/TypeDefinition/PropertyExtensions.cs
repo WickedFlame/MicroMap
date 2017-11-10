@@ -1,6 +1,4 @@
-﻿using MicroMap.Diagnostics;
-using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace MicroMap.TypeDefinition
@@ -11,30 +9,30 @@ namespace MicroMap.TypeDefinition
 
     internal static class PropertyExtensions
     {
-        public static PropertyGetterDelegate GetPropertyGetter(this PropertyInfo propertyInfo)
-        {
-            var getMethodInfo = propertyInfo.GetGetMethod();
-            if (getMethodInfo == null)
-            {
-                return null;
-            }
+        //public static PropertyGetterDelegate GetPropertyGetter(this PropertyInfo propertyInfo)
+        //{
+        //    var getMethodInfo = propertyInfo.GetGetMethod();
+        //    if (getMethodInfo == null)
+        //    {
+        //        return null;
+        //    }
 
-            try
-            {
-                var objectInstanceParam = Expression.Parameter(typeof(object), "objectInstanceParam");
-                var instanceParam = Expression.Convert(objectInstanceParam, propertyInfo.DeclaringType);
+        //    try
+        //    {
+        //        var objectInstanceParam = Expression.Parameter(typeof(object), "objectInstanceParam");
+        //        var instanceParam = Expression.Convert(objectInstanceParam, propertyInfo.DeclaringType);
 
-                var propertyGetExpression = Expression.Call(instanceParam, getMethodInfo);
-                var objectPropertyGetExpression = Expression.Convert(propertyGetExpression, typeof(object));
+        //        var propertyGetExpression = Expression.Call(instanceParam, getMethodInfo);
+        //        var objectPropertyGetExpression = Expression.Convert(propertyGetExpression, typeof(object));
 
-                return Expression.Lambda<PropertyGetterDelegate>(objectPropertyGetExpression, objectInstanceParam).Compile();
-            }
-            catch (Exception ex)
-            {
-                LogDelegate.TraceLine(ex.Message);
-                throw;
-            }
-        }
+        //        return Expression.Lambda<PropertyGetterDelegate>(objectPropertyGetExpression, objectInstanceParam).Compile();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogDelegate.TraceLine(ex.Message);
+        //        throw;
+        //    }
+        //}
 
         public static PropertySetterDelegate GetPropertySetter(this PropertyInfo propertyInfo)
         {

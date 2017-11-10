@@ -101,14 +101,14 @@ namespace MicroMap.TypeDefinition
             return new FieldDefinition
             {
                 FieldName = propertyInfo.Name,
-                MemberName = propertyInfo.Name,
+                //MemberName = propertyInfo.Name,
                 EntityName = propertyInfo.DeclaringType.Name,
-                MemberType = propertyType,
+                //MemberType = propertyType,
                 FieldType = propertyType,
                 EntityType = propertyInfo.DeclaringType,
                 IsNullable = isNullable,
-                PropertyInfo = propertyInfo,
-                IsPrimaryKey = CheckPrimaryKey(propertyInfo, propertyInfo.DeclaringType.Name),
+                //PropertyInfo = propertyInfo,
+                //IsPrimaryKey = CheckPrimaryKey(propertyInfo, propertyInfo.DeclaringType.Name),
                 //GetValueFunction = propertyInfo.GetPropertyGetter(),
                 SetValueFunction = propertyInfo.GetPropertySetter(),
             };

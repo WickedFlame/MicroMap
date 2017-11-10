@@ -71,7 +71,9 @@ namespace MicroMap.TypeDefinition
             while (type != null)
             {
                 if (type.IsGenericType)
+                {
                     return type;
+                }
 
                 type = type.BaseType;
             }

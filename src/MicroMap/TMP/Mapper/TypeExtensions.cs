@@ -18,10 +18,13 @@ namespace MicroMap.Mapper
             while (type != null)
             {
                 if (type.IsGenericType)
+                {
                     return true;
+                }
 
                 type = type.BaseType;
             }
+
             return false;
         }
 
@@ -29,7 +32,9 @@ namespace MicroMap.Mapper
         public static bool IsAnonymousType(this Type type)
         {
             if (type == null)
+            {
                 throw new ArgumentNullException("type");
+            }
 
             // HACK: The only way to detect anonymous types right now.
             return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
@@ -49,8 +54,11 @@ namespace MicroMap.Mapper
                 }
 
                 if (genericType != null)
+                {
                     return genericType;
+                }
             }
+
             return null;
         }
     }

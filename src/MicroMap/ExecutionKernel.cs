@@ -14,8 +14,8 @@ namespace MicroMap
 
     public class ExecutionKernel : IExecutionKernel
     {
-        private IQueryCompiler _compiler;
-        private IExecutionContext _executionContext;
+        private readonly IQueryCompiler _compiler;
+        private readonly IExecutionContext _executionContext;
         private readonly ObjectMapper _mapper;
 
         public ExecutionKernel(IQueryCompiler compiler, IExecutionContext executionContext)
@@ -29,6 +29,9 @@ namespace MicroMap
         public IEnumerable<T> Execute<T>(ComponentContainer queryContext)
         {
             var query = _compiler.Compile<T>(queryContext);
+
+            // Log the query here
+            System.Diagnostics.Debug.WriteLine(query.Query);
 
             using (var reader = _executionContext.Execute(query))
             {

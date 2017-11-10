@@ -4,6 +4,13 @@ using System.Linq.Expressions;
 
 namespace MicroMap
 {
+    /// EXPERIMENTAL
+    public interface IQueryContext<T, T1>
+    {
+        /// EXPERIMENTAL
+        IEnumerable<T2> Select<T2>(Expression<Func<T, T1, T2>> expression);
+    }
+
     public interface IQueryContext<T>
     {
         ComponentContainer Components { get; }
@@ -38,6 +45,12 @@ namespace MicroMap
         void Delete();
 
         void Insert<T1>(Func<T1> p);
+
+
+
+
+        /// EXPERIMENTAL
+        IQueryContext<T, T1> Join<T1>(Func<T, T1, object> func);
     }
 
     public interface IQueryContext

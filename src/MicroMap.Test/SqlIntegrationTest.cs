@@ -32,10 +32,31 @@ namespace MicroMap.Test
                 //var sql = string.Empty;
                 //context.BeforeExecute(c => sql = c.Query);
 
+                // ->
                 var one = context.From<Awesome>().Select();
                 // SELECT ID, Value FROM Awesome
                 executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome")), Times.Once);
 
+                // ->
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>();
+                // SELECT ID, Value FROM Awesome WHERE ID = 1
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome WHERE Awesome.ID = 1")), Times.Once);
+
+                context.From<Awesome>().Select<Awesome2>("MAX(ID) as IDs");
+                // -> SELECT MAX(ID) as IDs FROM Awesome
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as IDs");
+                // -> SELECT MAX(ID) as IDs FROM Awesome WHERE Awesome.ID = 1
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome WHERE Awesome.ID = 1")), Times.Once);
+
+                context.From<Awesome>().Select<Awesome2>("ID as IDs");
+                // SELECT ID as IDs FROM Awesome
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("ID as IDs");
+                // SELECT ID as IDs FROM Awesome WHERE ID = 1
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome WHERE Awesome.ID = 1")), Times.Once);
 
                 context.From<Awesome>().Select(a => new { IDs = a.ID });
                 // SELECT ID FROM Awesome
@@ -57,17 +78,13 @@ namespace MicroMap.Test
                 // SELECT ID FROM Awesome WHERE ID = 1
                 // -> SELECT ID AS IDs FROM Awesome WHERE ID = 1
 
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>();
-                // SELECT ID, Value FROM Awesome WHERE ID = 1
+                
 
                 //context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as ID", a => new { IDs = a.ID });
 
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as IDs"); // IEnumerable<Awesome2>
-                // SELECT MAX(ID) FROM Awesome WHERE ID = 1
-                // -> SELECT MAX(ID) as IDs FROM Awesome WHERE ID = 1
+                
 
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("ID as IDs");
-                // SELECT ID as IDs FROM Awesome WHERE ID = 1
+                
 
 
 

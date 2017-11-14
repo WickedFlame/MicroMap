@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace MicroMap
 {
     public interface IDatabaseConnection
     {
         IDatabaseContext Open();
+
+        IDbConnection Conect();
     }
 
     public class DatabaseConnection : IDatabaseConnection
@@ -12,8 +16,15 @@ namespace MicroMap
         private IQueryCompiler _compiler;
         private IExecutionContext _executionContext;
 
+        private string _connectionString;
+
         public DatabaseConnection()
         {
+        }
+
+        public DatabaseConnection(string connectionString)
+        {
+            _connectionString = connectionString;
         }
 
         public DatabaseConnection(IQueryCompiler compiler, IExecutionContext executionContext)
@@ -21,7 +32,12 @@ namespace MicroMap
             _compiler = compiler;
             _executionContext = executionContext;
         }
-        
+
+        public IDbConnection Conect()
+        {
+            return new SqlConnection(_connectionString);
+        }
+
         /// <summary>
         /// Opens a new DatabaseContext based on this connection
         /// </summary>

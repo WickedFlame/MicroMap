@@ -45,7 +45,7 @@ namespace MicroMap
             _databaseConnection = databaseConnection;
 
             Compiler = new QueryCompiler();
-            ExecutionContext = new ExecutionContext();
+            ExecutionContext = new ExecutionContext(_databaseConnection);
         }
 
         public IQueryCompiler Compiler { get; set; }

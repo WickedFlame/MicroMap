@@ -10,7 +10,7 @@ namespace MicroMap.UnitTest
         public void DatabaseConnection_Open_ExternalObjects()
         {
             var compiler = new QueryCompiler();
-            var executor = new ExecutionContext();
+            var executor = new ExecutionContext(null);
 
             var connection = new DatabaseConnection(compiler, executor);
             var context = connection.Open();
@@ -22,7 +22,7 @@ namespace MicroMap.UnitTest
         [Test]
         public void DatabaseConnection_Open_ExternalObjects_CompilerNull()
         {
-            var executor = new ExecutionContext();
+            var executor = new ExecutionContext(null);
 
             var connection = new DatabaseConnection(null, executor);
             var context = connection.Open();

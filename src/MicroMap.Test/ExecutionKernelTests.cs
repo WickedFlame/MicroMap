@@ -30,7 +30,7 @@ namespace MicroMap.UnitTest
             };
 
             var compiler = new Mock<IQueryCompiler>();
-            compiler.Setup(exp => exp.Compile<Item>(It.Is<ComponentContainer>(c => c == container))).Returns(() => compiledQuery);
+            compiler.Setup(exp => exp.Compile(It.Is<ComponentContainer>(c => c == container))).Returns(() => compiledQuery);
             var executor = new Mock<IExecutionContext>();
             executor.Setup(exp => exp.Execute(It.Is<CompiledQuery>(c => c == compiledQuery))).Returns(() => new DataReaderContext(new MockedDataReader(items, typeof(Item))));
 
@@ -38,7 +38,7 @@ namespace MicroMap.UnitTest
             var kernel = new ExecutionKernel(compiler.Object, executor.Object);
             var result = kernel.Execute<Item>(container);
 
-            compiler.Verify(exp => exp.Compile<Item>(It.Is<ComponentContainer>(c => c == container)), Times.Once);
+            compiler.Verify(exp => exp.Compile(It.Is<ComponentContainer>(c => c == container)), Times.Once);
             executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c == compiledQuery)), Times.Once);
 
             Assert.That(result.Count() == 1);

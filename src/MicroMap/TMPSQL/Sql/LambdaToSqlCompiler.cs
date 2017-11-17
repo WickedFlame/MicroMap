@@ -345,13 +345,13 @@ namespace MicroMap.TMP.Sql
             catch (InvalidOperationException)
             { 
                 // FieldName ?
-                var exprs = CompileExpressionList(nex.Arguments);
+                var exprs = CompileExpressionList(nex.Arguments, nex.Members);
                 var sb = new StringBuilder();
                 foreach (var e in exprs)
                 {
                     if (sb.Length > 0)
                     {
-                        sb.Append(",");
+                        sb.Append(", ");
                     }
 
                     sb.Append(e);
@@ -389,6 +389,31 @@ namespace MicroMap.TMP.Sql
                 else
                 {
                     list.Add(Compile(original[i]));
+                }
+            }
+
+            return list;
+        }
+
+        protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> original, ReadOnlyCollection<MemberInfo> members)
+        {
+            var list = new List<object>();
+            for (int i = 0, n = original.Count; i < n; i++)
+            {
+                if (original[i].NodeType == ExpressionType.NewArrayInit || original[i].NodeType == ExpressionType.NewArrayBounds)
+                {
+                    list.AddRange(CompileNewArrayFromExpressionList(original[i] as NewArrayExpression));
+                }
+                else
+                {
+                    var field = Compile(original[i]);
+                    var member = members[i].Name;
+
+                    bool notsame = field.ToString().Contains('.') && field.ToString().Substring(field.ToString().LastIndexOf('.') + 1) != member;
+
+
+                    list.Add(notsame ? $"{field} AS {member}" : field);
+                    //list.Add(Compile(original[i]));
                 }
             }
 

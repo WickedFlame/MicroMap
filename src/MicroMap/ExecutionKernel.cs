@@ -28,7 +28,7 @@ namespace MicroMap
 
         public IEnumerable<T> Execute<T>(ComponentContainer queryContext)
         {
-            var query = _compiler.Compile<T>(queryContext);
+            var query = _compiler.Compile(queryContext);
 
             // Log the query here
             System.Diagnostics.Debug.WriteLine(query.Query);

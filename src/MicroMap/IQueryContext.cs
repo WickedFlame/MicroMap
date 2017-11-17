@@ -4,11 +4,19 @@ using System.Linq.Expressions;
 
 namespace MicroMap
 {
-    /// EXPERIMENTAL
-    public interface IQueryContext<T, T1>
+    public interface IQueryContext
     {
-        /// EXPERIMENTAL
-        IEnumerable<T2> Select<T2>(Expression<Func<T, T1, T2>> expression);
+        ComponentContainer Components { get; }
+
+        QueryContext Add(IQueryComponent queryComponent);
+
+
+
+        IEnumerable<T> Select<T>();
+
+        IEnumerable<T1> Select<T1>(Func<T1> definingType);
+
+        IEnumerable<T1> Select<T1>(Func<T1> definingType, Func<T1, object> output);
     }
 
     public interface IQueryContext<T>
@@ -53,18 +61,10 @@ namespace MicroMap
         IQueryContext<T, T1> Join<T1>(Func<T, T1, object> func);
     }
 
-    public interface IQueryContext
+    /// EXPERIMENTAL
+    public interface IQueryContext<T, T1>
     {
-        ComponentContainer Components { get; }
-
-        QueryContext Add(IQueryComponent queryComponent);
-
-
-
-        IEnumerable<T> Select<T>();
-
-        IEnumerable<T1> Select<T1>(Func<T1> definingType);
-
-        IEnumerable<T1> Select<T1>(Func<T1> definingType, Func<T1, object> output);
+        /// EXPERIMENTAL
+        IEnumerable<T2> Select<T2>(Expression<Func<T, T1, T2>> expression);
     }
 }

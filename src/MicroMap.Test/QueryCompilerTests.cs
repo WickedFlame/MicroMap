@@ -21,7 +21,7 @@ namespace MicroMap.UnitTest
                 .Add(new QueryComponent(SyntaxComponent.FieldList, "ID, Name"));
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile<Item>(container);
+            var query = compiler.Compile(container);
 
             Assert.AreEqual("SELECT ID, Name FROM Item", query.Query);
         }

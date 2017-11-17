@@ -2,6 +2,6 @@
 {
     public interface IQueryCompiler
     {
-        CompiledQuery Compile<T>(ComponentContainer container);
+        CompiledQuery Compile(ComponentContainer container);
     }
 }

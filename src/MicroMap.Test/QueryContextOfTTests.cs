@@ -83,12 +83,15 @@ namespace MicroMap.UnitTest
             //_kernel.Setup(exp => exp.Execute<object>(It.IsAny<ComponentContainer>())).Returns(() => new List<Item> { new Item { ID = 5, Name = "n" } });
             //Setup(_kernel, new { ID = 5, Name = "n" });
 
-            var item = new { ID = 5, Name = "n" };
+            var item = new { IDs = 5, N = "n" };
             var data = new[] { item };
             var executor = new Mock<IExecutionContext>();
             executor.Setup(exp => exp.Execute(It.IsAny<CompiledQuery>())).Returns(() => new DataReaderContext(new MockedDataReader(data, item.GetType())));
 
-            var kernel = new ExecutionKernel(new Mock<IQueryCompiler>().Object, executor.Object);
+            var compiler = new Mock<IQueryCompiler>();
+            compiler.Setup(exp => exp.Compile(It.IsAny<ComponentContainer>())).Returns(() => new CompiledQuery());
+
+            var kernel = new ExecutionKernel(compiler.Object, executor.Object);
 
             // Execute
             //var context = new QueryContext<Item>(_kernel.Object);
@@ -99,7 +102,7 @@ namespace MicroMap.UnitTest
 
             Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Command && c.Expression == "SELECT"));
             Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Keyword && c.Expression == "FROM"));
-            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.FieldList && c.Expression == "Item.ID AS IDs,Item.Name AS N"));
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.FieldList && c.Expression == "Item.ID AS IDs, Item.Name AS N"));
 
             Assert.That(items.Any());
             Assert.That(items.First().IDs == 5);

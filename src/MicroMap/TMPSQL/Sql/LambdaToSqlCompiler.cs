@@ -334,18 +334,21 @@ namespace MicroMap.TMP.Sql
 
         protected virtual object CompileNew(NewExpression nex)
         {
-            // TODO : check !
+            // TODO : check! this allways runs into the exception
             var member = Expression.Convert(nex, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
+
             try
             {
                 var getter = lambda.Compile();
                 return getter();
             }
-            catch (InvalidOperationException)
-            { 
+            catch (InvalidOperationException ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
                 // FieldName ?
-                var exprs = CompileExpressionList(nex.Arguments, nex.Members);
+                var exprs = CompileExpressionList(nex.Arguments.ToArray(), nex.Members.ToArray());
                 var sb = new StringBuilder();
                 foreach (var e in exprs)
                 {
@@ -372,41 +375,86 @@ namespace MicroMap.TMP.Sql
             return sb.ToString();
         }
 
-        protected virtual object CompileMemberInit(MemberInitExpression exp)
+        protected virtual object CompileMemberInit(MemberInitExpression member)
         {
-            return Expression.Lambda(exp).Compile().DynamicInvoke();
+            // TODO : check! this allways runs into the exception
+            var lambda = Expression.Lambda(member);
+
+            try
+            {
+                var getter = lambda.Compile();
+                return getter.DynamicInvoke();
+            }
+            catch (InvalidOperationException ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
+                var expressions = member.Bindings.Select(b => ((MemberAssignment) b).Expression).ToArray();
+                var members = member.Bindings.Select(b => ((MemberAssignment) b).Member).ToArray();
+                var exprs = CompileExpressionList(expressions, members);
+                var sb = new StringBuilder();
+                foreach (var e in exprs)
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(e);
+                }
+
+                return sb.ToString();
+            }
         }
 
-        protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> original)
+        protected virtual List<object> CompileExpressionList(IEnumerable<Expression> original)
         {
             var list = new List<object>();
-            for (int i = 0, n = original.Count; i < n; i++)
+            foreach (var orig in original)
             {
-                if (original[i].NodeType == ExpressionType.NewArrayInit || original[i].NodeType == ExpressionType.NewArrayBounds)
+                if (orig.NodeType == ExpressionType.NewArrayInit || orig.NodeType == ExpressionType.NewArrayBounds)
                 {
-                    list.AddRange(CompileNewArrayFromExpressionList(original[i] as NewArrayExpression));
+                    list.AddRange(CompileNewArrayFromExpressionList(orig as NewArrayExpression));
                 }
                 else
                 {
-                    list.Add(Compile(original[i]));
+                    list.Add(Compile(orig));
                 }
             }
 
             return list;
         }
 
-        protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> original, ReadOnlyCollection<MemberInfo> members)
+        //protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> original)
+        //{
+        //    var list = new List<object>();
+        //    for (int i = 0, n = original.Count; i < n; i++)
+        //    {
+        //        if (original[i].NodeType == ExpressionType.NewArrayInit || original[i].NodeType == ExpressionType.NewArrayBounds)
+        //        {
+        //            list.AddRange(CompileNewArrayFromExpressionList(original[i] as NewArrayExpression));
+        //        }
+        //        else
+        //        {
+        //            list.Add(Compile(original[i]));
+        //        }
+        //    }
+
+        //    return list;
+        //}
+
+        protected virtual List<object> CompileExpressionList(Expression[] expressions, MemberInfo[] members)
         {
             var list = new List<object>();
-            for (int i = 0, n = original.Count; i < n; i++)
+            for (int i = 0, n = expressions.Count(); i < n; i++)
             {
-                if (original[i].NodeType == ExpressionType.NewArrayInit || original[i].NodeType == ExpressionType.NewArrayBounds)
+                if (expressions[i].NodeType == ExpressionType.NewArrayInit || expressions[i].NodeType == ExpressionType.NewArrayBounds)
                 {
-                    list.AddRange(CompileNewArrayFromExpressionList(original[i] as NewArrayExpression));
+                    list.AddRange(CompileNewArrayFromExpressionList(expressions[i] as NewArrayExpression));
                 }
                 else
                 {
-                    var field = Compile(original[i]);
+                    var field = Compile(expressions[i]);
                     var member = members[i].Name;
 
                     bool notsame = field.ToString().Contains('.') && field.ToString().Substring(field.ToString().LastIndexOf('.') + 1) != member;
@@ -419,6 +467,31 @@ namespace MicroMap.TMP.Sql
 
             return list;
         }
+
+        //protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> expressions, ReadOnlyCollection<MemberInfo> members)
+        //{
+        //    var list = new List<object>();
+        //    for (int i = 0, n = expressions.Count; i < n; i++)
+        //    {
+        //        if (expressions[i].NodeType == ExpressionType.NewArrayInit || expressions[i].NodeType == ExpressionType.NewArrayBounds)
+        //        {
+        //            list.AddRange(CompileNewArrayFromExpressionList(expressions[i] as NewArrayExpression));
+        //        }
+        //        else
+        //        {
+        //            var field = Compile(expressions[i]);
+        //            var member = members[i].Name;
+
+        //            bool notsame = field.ToString().Contains('.') && field.ToString().Substring(field.ToString().LastIndexOf('.') + 1) != member;
+
+
+        //            list.Add(notsame ? $"{field} AS {member}" : field);
+        //            //list.Add(Compile(original[i]));
+        //        }
+        //    }
+
+        //    return list;
+        //}
 
         protected virtual IList<object> CompileNewArrayFromExpressionList(NewArrayExpression na)
         {

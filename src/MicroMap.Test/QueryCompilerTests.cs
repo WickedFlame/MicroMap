@@ -26,6 +26,21 @@ namespace MicroMap.UnitTest
             Assert.AreEqual("SELECT ID, Name FROM Item", query.Query);
         }
 
+        [Test]
+        public void QueryCompiler_Compile_UnOrdered()
+        {
+            var container = new ComponentContainer()
+                .Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"))
+                .Add(new QueryComponent(SyntaxComponent.Keytable, "Item"))
+                .Add(new QueryComponent(SyntaxComponent.FieldList, "ID, Name"))
+                .Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(container);
+
+            Assert.AreEqual("SELECT ID, Name FROM Item", query.Query);
+        }
+
         public class Item
         {
             public int ID { get; set; }

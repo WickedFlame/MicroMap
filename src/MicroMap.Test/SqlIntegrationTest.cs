@@ -29,64 +29,12 @@ namespace MicroMap.Test
             var provider = new DatabaseConnection(null, executor.Object);
             using (var context = provider.Open())
             {
-                //var sql = string.Empty;
-                //context.BeforeExecute(c => sql = c.Query);
-
-                // ->
-                var one = context.From<Awesome>().Select();
-                // SELECT ID, Value FROM Awesome
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome")), Times.Once);
-
-                // ->
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>();
-                // SELECT ID, Value FROM Awesome WHERE ID = 1
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
-
-                context.From<Awesome>().Select<Awesome2>("MAX(ID) as IDs");
-                // -> SELECT MAX(ID) as IDs FROM Awesome
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome")), Times.Once);
-
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as IDs");
-                // -> SELECT MAX(ID) as IDs FROM Awesome WHERE Awesome.ID = 1
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
-
-                context.From<Awesome>().Select<Awesome2>("ID as IDs");
-                // SELECT ID as IDs FROM Awesome
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome")), Times.Once);
-
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("ID as IDs");
-                // SELECT ID as IDs FROM Awesome WHERE ID = 1
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
-
-                context.From<Awesome>().Select(a => new { IDs = a.ID, Name = a.Value });
-                // SELECT ID FROM Awesome
-                // -> SELECT ID AS IDs FROM Awesome
-                // -> SELECT Awesome.ID as IDs FROM Awesome
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs, Awesome.Value AS Name FROM Awesome")), Times.Once);
-
-
-
-                context.From<Awesome>(a => a.ID == 1).Select(a => new { IDs = a.ID });
-                // SELECT ID FROM Awesome WHERE ID = 1
-                // -> SELECT ID as IDs FROM Awesome WHERE ID = 1
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
-
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(a => new Awesome2 { IDs = a.ID });
-                // SELECT ID, Value FROM Awesome WHERE ID = 1
-                // -> SELECT ID AS IDs, Value FROM Awesome WHERE ID = 1
-                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
-
-                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(a => new { IDs = a.ID });
-                // SELECT ID FROM Awesome WHERE ID = 1
-                // -> SELECT ID AS IDs FROM Awesome WHERE ID = 1
-
-                
 
                 //context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as ID", a => new { IDs = a.ID });
 
-                
 
-                
+
+
 
 
 
@@ -146,6 +94,63 @@ namespace MicroMap.Test
 
                 var lst = new List<Awesome>();
                 var tmp3 = from a in lst where a.ID == 1 select new { a.ID, Name = a.ID };
+            }
+        }
+
+        [Test]
+        public void SqlIntegration_Select_Mocked()
+        {
+            var awesomes = new List<Awesome>
+            {
+                new Awesome { ID = 1 }
+            };
+
+            var executor = new Mock<IExecutionContext>();
+            executor.Setup(exp => exp.Execute(It.IsAny<CompiledQuery>())).Returns(() => new DataReaderContext(new MockedDataReader(awesomes, typeof(Awesome))));
+            
+            var provider = new DatabaseConnection(null, executor.Object);
+            using (var context = provider.Open())
+            {
+                context.From<Awesome>().Select();
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>();
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID, Value FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                context.From<Awesome>().Select<Awesome2>("MAX(ID) as IDs");
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as IDs");
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT MAX(ID) as IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                context.From<Awesome>().Select<Awesome2>("ID as IDs");
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("ID as IDs");
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT ID as IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                context.From<Awesome>().Select(a => new { IDs = a.ID, Name = a.Value });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs, Awesome.Value AS Name FROM Awesome")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select(a => new { IDs = a.ID });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                executor.ResetCalls();
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(b => new Awesome2 { IDs = b.ID });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome>(b => new { b.ID, b.Value });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID, Awesome.Value FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                executor.ResetCalls();
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome>(b => new Awesome { ID = b.ID, Value = b.Value });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID, Awesome.Value FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
+
+                context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(a => new { IDs = a.ID });
+                executor.Verify(exp => exp.Execute(It.Is<CompiledQuery>(c => c.Query == "SELECT Awesome.ID AS IDs FROM Awesome WHERE (Awesome.ID = 1)")), Times.Once);
             }
         }
 

@@ -52,6 +52,7 @@
     <Compile Include="IQueryCompiler.cs" />
     <Compile Include="IQueryComponent.cs" />
     <Compile Include="IQueryContext.cs" />
+    <Compile Include="QueryContextExtensions.cs" />
     <Compile Include="TMP\Diagnostics\LoggerCategory.cs" />
     <Compile Include="TMP\Diagnostics\LoggerFactory.cs" />
     <Compile Include="TMP\Mapper\DataReaderExtensions.cs" />

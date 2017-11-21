@@ -40,7 +40,7 @@ namespace MicroMap
         {
         }
 
-        public QueryContext Add(IQueryComponent queryComponent)
+        public IQueryContext Add(IQueryComponent queryComponent)
         {
             AddComponent(queryComponent);
 
@@ -70,7 +70,7 @@ namespace MicroMap
         {
         }
 
-        public QueryContext<T> Add(IQueryComponent queryComponent)
+        public IQueryContext<T> Add(IQueryComponent queryComponent)
         {
             AddComponent(queryComponent);
 
@@ -79,61 +79,66 @@ namespace MicroMap
 
 
 
-
+        
 
 
         
 
         public IEnumerable<T> Select()
         {
-            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
-            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+            var context = this.AddSelect()
+                .AddFrom();
 
             // add all fields from type T as FieldList
             var fieldList = typeof(T).GetTypeDefinitionMemberNames();
             var fields = fieldList.Aggregate((i, j) => i + ", " + j);
-            Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
 
-            return Kernel.Execute<T>(Components);
+            return Kernel.Execute<T>(context.Components);
         }
         
         public IEnumerable<T1> Select<T1>()
         {
-            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
-            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+            var context = this.AddSelect()
+                .AddFrom();
 
             // add all fields from type T as FieldList
             var fieldList = typeof(T).GetTypeDefinitionMemberNames();
             var fields = fieldList.Aggregate((i, j) => i + ", " + j);
-            Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
 
-            return Kernel.Execute<T1>(Components);
+            return Kernel.Execute<T1>(context.Components);
         }
 
         public IEnumerable<T1> Select<T1>(Expression<Func<T, T1>> expression)
         {
-            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
-            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+            var context = this.AddSelect()
+                .AddFrom();
 
             var fields = LambdaToSqlCompiler.Compile(expression);
-            Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
 
-            return Kernel.Execute<T1>(Components);
+            return Kernel.Execute<T1>(context.Components);
         }
 
-        public IEnumerable<T1> Select<T1>(Func<T, object> expression)
+        public IEnumerable<T1> Select<T1>(Expression<Func<T, object>> expression)
         {
-            throw new NotImplementedException();
+            var context = this.AddSelect()
+                .AddFrom();
+
+            var fields = LambdaToSqlCompiler.Compile(expression);
+            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+
+            return Kernel.Execute<T1>(context.Components);
         }
 
         public IEnumerable<T1> Select<T1>(string expression)
         {
-            Add(new QueryComponent(SyntaxComponent.Command, "SELECT"));
-            Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
-            
-            Add(new QueryComponent(SyntaxComponent.FieldList, expression));
+            var context = this.AddSelect()
+                .AddFrom()
+                .Add(new QueryComponent(SyntaxComponent.FieldList, expression));
 
-            return Kernel.Execute<T1>(Components);
+            return Kernel.Execute<T1>(context.Components);
         }
 
         public T Single()

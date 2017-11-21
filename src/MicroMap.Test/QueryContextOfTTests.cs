@@ -80,9 +80,6 @@ namespace MicroMap.UnitTest
         [Test]
         public void QueryContextOfT_Select_AnonymOutput()
         {
-            //_kernel.Setup(exp => exp.Execute<object>(It.IsAny<ComponentContainer>())).Returns(() => new List<Item> { new Item { ID = 5, Name = "n" } });
-            //Setup(_kernel, new { ID = 5, Name = "n" });
-
             var item = new { IDs = 5, N = "n" };
             var data = new[] { item };
             var executor = new Mock<IExecutionContext>();
@@ -94,7 +91,6 @@ namespace MicroMap.UnitTest
             var kernel = new ExecutionKernel(compiler.Object, executor.Object);
 
             // Execute
-            //var context = new QueryContext<Item>(_kernel.Object);
             var context = new QueryContext<Item>(kernel);
             context.Add(new QueryComponent(SyntaxComponent.Keytable, "Item"));
             
@@ -107,6 +103,62 @@ namespace MicroMap.UnitTest
             Assert.That(items.Any());
             Assert.That(items.First().IDs == 5);
             Assert.That(items.First().N == "n");
+        }
+
+        [Test]
+        public void QueryContextOfT_Select_TypedOutput()
+        {
+            var item = new { IDs = 5, Name = "n" };
+            var data = new[] { item };
+            var executor = new Mock<IExecutionContext>();
+            executor.Setup(exp => exp.Execute(It.IsAny<CompiledQuery>())).Returns(() => new DataReaderContext(new MockedDataReader(data, item.GetType())));
+
+            var compiler = new Mock<IQueryCompiler>();
+            compiler.Setup(exp => exp.Compile(It.IsAny<ComponentContainer>())).Returns(() => new CompiledQuery());
+
+            var kernel = new ExecutionKernel(compiler.Object, executor.Object);
+
+            // Execute
+            var context = new QueryContext<Item>(kernel);
+            context.Add(new QueryComponent(SyntaxComponent.Keytable, "Item"));
+
+            var items = context.Select<Item3>(a => new Item3 { IDs = a.ID, Name = a.Name });
+
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Command && c.Expression == "SELECT"));
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Keyword && c.Expression == "FROM"));
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.FieldList && c.Expression == "Item.ID AS IDs, Item.Name"));
+
+            Assert.That(items.Any());
+            Assert.That(items.First().IDs == 5);
+            Assert.That(items.First().Name == "n");
+        }
+
+        [Test]
+        public void QueryContextOfT_Select_TypedAndAnonymOutput()
+        {
+            var item = new { IDs = 5, Name = "n" };
+            var data = new[] { item };
+            var executor = new Mock<IExecutionContext>();
+            executor.Setup(exp => exp.Execute(It.IsAny<CompiledQuery>())).Returns(() => new DataReaderContext(new MockedDataReader(data, item.GetType())));
+
+            var compiler = new Mock<IQueryCompiler>();
+            compiler.Setup(exp => exp.Compile(It.IsAny<ComponentContainer>())).Returns(() => new CompiledQuery());
+
+            var kernel = new ExecutionKernel(compiler.Object, executor.Object);
+
+            // Execute
+            var context = new QueryContext<Item>(kernel);
+            context.Add(new QueryComponent(SyntaxComponent.Keytable, "Item"));
+
+            var items = context.Select<Item3>(a => new { IDs = a.ID, a.Name });
+
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Command && c.Expression == "SELECT"));
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.Keyword && c.Expression == "FROM"));
+            Assert.IsNotNull(context.Components.Single(c => c.Type == SyntaxComponent.FieldList && c.Expression == "Item.ID AS IDs, Item.Name"));
+
+            Assert.That(items.Any());
+            Assert.That(items.First().IDs == 5);
+            Assert.That(items.First().Name == "n");
         }
 
         [Test]

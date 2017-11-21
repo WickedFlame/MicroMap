@@ -8,7 +8,7 @@ namespace MicroMap
     {
         ComponentContainer Components { get; }
 
-        QueryContext Add(IQueryComponent queryComponent);
+        IQueryContext Add(IQueryComponent queryComponent);
 
 
 
@@ -23,7 +23,7 @@ namespace MicroMap
     {
         ComponentContainer Components { get; }
 
-        QueryContext<T> Add(IQueryComponent queryComponent);
+        IQueryContext<T> Add(IQueryComponent queryComponent);
 
 
 
@@ -34,7 +34,7 @@ namespace MicroMap
 
         IEnumerable<T1> Select<T1>(Expression<Func<T, T1>> expression);
 
-        IEnumerable<T1> Select<T1>(Func<T, object> expression);
+        IEnumerable<T1> Select<T1>(Expression<Func<T, object>> expression);
 
         IEnumerable<T1> Select<T1>(string expression);
 

@@ -50,13 +50,7 @@ namespace MicroMap
         /// <summary>
         /// Gets the loggerfactory that containes all loggers that are defined in the configuraiton additionaly to the loggers added per instance of the settings
         /// </summary>
-        public ILoggerFactory LoggerFactory
-        {
-            get
-            {
-                return _loggerFactory.Value;
-            }
-        }
+        public ILoggerFactory LoggerFactory => _loggerFactory.Value;
 
         /// <summary>
         /// Gets or sets how restrictive the mapper handles errors

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace MicroMap.Diagnostics
 {
@@ -30,15 +29,5 @@ namespace MicroMap.Diagnostics
                 logger.Write(message, source, category, logtime);
             }
         }
-
-        //internal static void TraceLine(string message)
-        //{
-        //    Trace.WriteLine(message);
-        //}
-
-        //internal static void TraceLine(string message, params string[] args)
-        //{
-        //    Trace.WriteLine(string.Format(message, args));
-        //}
     }
 }

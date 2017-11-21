@@ -4,15 +4,14 @@ namespace MicroMap.Diagnostics
 {
     public class LoggerFactory : ILoggerFactory
     {
-        private readonly Dictionary<string, ILogWriter> _logProviders = new Dictionary<string, ILogWriter>();
+        private readonly Dictionary<string, ILogWriter> _logProviders;
 
-        public IEnumerable<ILogWriter> LogProviders
+        public LoggerFactory()
         {
-            get
-            {
-                return _logProviders.Values;
-            }
+            _logProviders = new Dictionary<string, ILogWriter>();
         }
+
+        public IEnumerable<ILogWriter> LogProviders => _logProviders.Values;
 
         public void AddWriter(string name, ILogWriter logger)
         {

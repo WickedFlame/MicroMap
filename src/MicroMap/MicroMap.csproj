@@ -53,8 +53,8 @@
     <Compile Include="IQueryComponent.cs" />
     <Compile Include="IQueryContext.cs" />
     <Compile Include="QueryContextExtensions.cs" />
-    <Compile Include="TMP\Diagnostics\LoggerCategory.cs" />
-    <Compile Include="TMP\Diagnostics\LoggerFactory.cs" />
+    <Compile Include="Diagnostics\LoggerCategory.cs" />
+    <Compile Include="Diagnostics\LoggerFactory.cs" />
     <Compile Include="TMP\Mapper\DataReaderExtensions.cs" />
     <Compile Include="TMP\Mapper\IEnumerableExtensions.cs" />
     <Compile Include="TMP\Mapper\InstanceFactory.cs" />
@@ -66,9 +66,9 @@
     <Compile Include="QueryComponent.cs" />
     <Compile Include="QueryContext.cs" />
     <Compile Include="Reader\DataReaderContext.cs" />
-    <Compile Include="TMP\Diagnostics\ILoggerFactory.cs" />
-    <Compile Include="TMP\Diagnostics\ILogWriter.cs" />
-    <Compile Include="TMP\Diagnostics\LogDelegate.cs" />
+    <Compile Include="Diagnostics\ILoggerFactory.cs" />
+    <Compile Include="Diagnostics\ILogWriter.cs" />
+    <Compile Include="Diagnostics\LogDelegate.cs" />
     <Compile Include="TMP\Mapper\ReaderResult.cs" />
     <Compile Include="TMP\Mapper\RestrictiveMode.cs" />
     <Compile Include="TMP\Mapper\TypeExtensions.cs" />

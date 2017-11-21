@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MicroMap
 {
@@ -16,6 +12,11 @@ namespace MicroMap
         public static IQueryContext<T> AddFrom<T>(this IQueryContext<T> context)
         {
             return context.Add(new QueryComponent(SyntaxComponent.Keyword, "FROM"));
+        }
+
+        public static IQueryContext<T> Add<T>(this IQueryContext<T> context, Func<IQueryComponent> expression)
+        {
+            return context.Add(expression());
         }
     }
 }

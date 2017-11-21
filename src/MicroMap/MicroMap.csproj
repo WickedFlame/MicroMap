@@ -74,21 +74,21 @@
     <Compile Include="TMP\Mapper\TypeExtensions.cs" />
     <Compile Include="TMP\Settings.cs" />
     <Compile Include="TMP\TypeDefinition\FieldDefinition.cs" />
-    <Compile Include="TMPSQL\Sql\BaseDialectProvider.cs" />
-    <Compile Include="TMPSQL\CustomConfiguration.cs" />
-    <Compile Include="TMPSQL\Sql\DialectProvider.cs" />
-    <Compile Include="TMPSQL\Sql\EnumMemberAccess.cs" />
-    <Compile Include="TMPSQL\Sql\ISqlString.cs" />
-    <Compile Include="TMPSQL\Sql\LambdaToSqlCompiler.cs" />
-    <Compile Include="TMPSQL\Sql\PartialSqlString.cs" />
+    <Compile Include="Sql\BaseDialectProvider.cs" />
+    <Compile Include="Sql\CustomConfiguration.cs" />
+    <Compile Include="Sql\DialectProvider.cs" />
+    <Compile Include="Sql\EnumMemberAccess.cs" />
+    <Compile Include="Sql\ISqlString.cs" />
+    <Compile Include="Sql\LambdaToSqlCompiler.cs" />
+    <Compile Include="Sql\PartialSqlString.cs" />
     <Compile Include="IDataReaderContext.cs" />
     <Compile Include="TMP\TypeDefinition\PropertyExtensions.cs" />
     <Compile Include="TMP\TypeDefinition\TypeDefinitionFactory.cs" />
     <Compile Include="TMP\TypeDefinition\TypeExtensions.cs" />
-    <Compile Include="TMPSQL\TypeExtensionsForLambdaExpressionConverter.cs" />
+    <Compile Include="Sql\TypeExtensionsForLambdaExpressionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="TMPSQL\Factories\" />
+    <Folder Include="TMP\Factories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

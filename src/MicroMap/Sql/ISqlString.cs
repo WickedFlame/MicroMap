@@ -1,5 +1,5 @@
 ﻿
-namespace MicroMap.TMP.Sql
+namespace MicroMap.Sql
 {
     public interface ISqlString
     {

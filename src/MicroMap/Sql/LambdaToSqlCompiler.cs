@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using MicroMap.TypeDefinition;
 
-namespace MicroMap.TMP.Sql
+namespace MicroMap.Sql
 {
     public static class LambdaToSqlCompiler
     {

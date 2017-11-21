@@ -56,11 +56,11 @@ namespace MicroMap
 
         public IQueryContext<T> From<T>(Expression<Func<T, bool>> expression)
         {
-            var query = new QueryContext<T>(new ExecutionKernel(Compiler, ExecutionContext));
-            query.Add(new QueryComponent(SyntaxComponent.Keytable, $"{typeof(T).Name}"));
+            var query = new QueryContext<T>(new ExecutionKernel(Compiler, ExecutionContext))
+                .Add(new QueryComponent(SyntaxComponent.Keytable, $"{typeof(T).Name}"));
 
             // convert expression to string
-            var qstr = MicroMap.TMP.Sql.LambdaToSqlCompiler.Compile(expression);
+            var qstr = Sql.LambdaToSqlCompiler.Compile(expression);
             query.Add(new QueryComponent(SyntaxComponent.Restriction, $"WHERE {qstr}"));
 
             return query;
@@ -68,18 +68,16 @@ namespace MicroMap
 
         public IQueryContext From(string expression)
         {
-            var query = new QueryContext(new ExecutionKernel(Compiler, ExecutionContext));
-
-            // convert expression to string
-            query.Add(new QueryComponent(SyntaxComponent.Restriction, expression));
+            var query = new QueryContext(new ExecutionKernel(Compiler, ExecutionContext))
+                .Add(new QueryComponent(SyntaxComponent.Restriction, expression));
 
             return query;
         }
 
         public IQueryContext<T> From<T>()
         {
-            var query = new QueryContext<T>(new ExecutionKernel(Compiler, ExecutionContext));
-            query.Add(new QueryComponent(SyntaxComponent.Keytable, $"{typeof(T).Name}"));
+            var query = new QueryContext<T>(new ExecutionKernel(Compiler, ExecutionContext))
+                .Add(new QueryComponent(SyntaxComponent.Keytable, $"{typeof(T).Name}"));
 
             return query;
         }

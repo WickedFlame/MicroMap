@@ -13,6 +13,7 @@ namespace MicroMap.Test
     public class SqlIntegrationTests
     {
         [Test]
+        [Ignore("test")]
         public void SqlIntegration()
         {
             var awesomes = new List<Awesome>
@@ -31,13 +32,7 @@ namespace MicroMap.Test
             {
 
                 //context.From<Awesome>(a => a.ID == 1).Select<Awesome2>("MAX(ID) as ID", a => new { IDs = a.ID });
-
-
-
-
-
-
-
+                
                 // EXPERIMENTAL
                 context.From<Awesome>(a => a.ID == 1).Join<Cool>((a, c) => c.AwesomeID == a.ID).Select((a, c) => new { c.CoolValue, a.ID });
                 //context.From<Awesome>(a => a.ID == 1, cfg => cfg.Join<Cool>((a, c) => c.AwesomeID == a.ID)).Select(() => new { CoolValue = string.Empty, ID = 0 });

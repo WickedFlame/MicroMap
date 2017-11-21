@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicroMap.TMP.Sql
+namespace MicroMap.Sql
 {
     public class DialectProvider : BaseDialectProvider
     {

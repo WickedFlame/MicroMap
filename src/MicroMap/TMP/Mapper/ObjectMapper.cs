@@ -1,13 +1,11 @@
 ﻿using MicroMap.Diagnostics;
-using MicroMap.TMP;
+using MicroMap;
 using MicroMap.TypeDefinition;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MicroMap.Mapper
 {
@@ -21,13 +19,7 @@ namespace MicroMap.Mapper
             _settings = settings;
         }
 
-        public ILogWriter Logger
-        {
-            get
-            {
-                return _settings.LoggerFactory.CreateLogger();
-            }
-        }
+        public ILogWriter Logger => _settings.LoggerFactory.CreateLogger();
 
         /// <summary>
         /// Maps the resultset to a POCO

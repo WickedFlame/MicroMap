@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace MicroMap.TMP.Sql
+namespace MicroMap.Sql
 {
     public class BaseDialectProvider
     {

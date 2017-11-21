@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
-namespace MicroMap.TMP
+namespace MicroMap.Sql
 {
     public static class TypeExtensionsForLambdaExpressionConverter
     {

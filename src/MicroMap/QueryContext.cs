@@ -1,4 +1,4 @@
-﻿using MicroMap.TMP.Sql;
+﻿using MicroMap.Sql;
 using MicroMap.TypeDefinition;
 using System;
 using System.Collections.Generic;
@@ -87,12 +87,14 @@ namespace MicroMap
         public IEnumerable<T> Select()
         {
             var context = this.AddSelect()
-                .AddFrom();
-
-            // add all fields from type T as FieldList
-            var fieldList = typeof(T).GetTypeDefinitionMemberNames();
-            var fields = fieldList.Aggregate((i, j) => i + ", " + j);
-            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+                .AddFrom()
+                .Add(() =>
+                {
+                    // add all fields from type T as FieldList
+                    var fieldList = typeof(T).GetTypeDefinitionMemberNames();
+                    var fields = fieldList.Aggregate((i, j) => i + ", " + j);
+                    return new QueryComponent(SyntaxComponent.FieldList, fields);
+                });
 
             return Kernel.Execute<T>(context.Components);
         }
@@ -100,12 +102,14 @@ namespace MicroMap
         public IEnumerable<T1> Select<T1>()
         {
             var context = this.AddSelect()
-                .AddFrom();
-
-            // add all fields from type T as FieldList
-            var fieldList = typeof(T).GetTypeDefinitionMemberNames();
-            var fields = fieldList.Aggregate((i, j) => i + ", " + j);
-            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+                .AddFrom()
+                .Add(() =>
+                {
+                    // add all fields from type T as FieldList
+                    var fieldList = typeof(T).GetTypeDefinitionMemberNames();
+                    var fields = fieldList.Aggregate((i, j) => i + ", " + j);
+                    return new QueryComponent(SyntaxComponent.FieldList, fields);
+                });
 
             return Kernel.Execute<T1>(context.Components);
         }
@@ -113,10 +117,8 @@ namespace MicroMap
         public IEnumerable<T1> Select<T1>(Expression<Func<T, T1>> expression)
         {
             var context = this.AddSelect()
-                .AddFrom();
-
-            var fields = LambdaToSqlCompiler.Compile(expression);
-            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+                .AddFrom()
+                .Add(new QueryComponent(SyntaxComponent.FieldList, LambdaToSqlCompiler.Compile(expression)));
 
             return Kernel.Execute<T1>(context.Components);
         }
@@ -124,10 +126,8 @@ namespace MicroMap
         public IEnumerable<T1> Select<T1>(Expression<Func<T, object>> expression)
         {
             var context = this.AddSelect()
-                .AddFrom();
-
-            var fields = LambdaToSqlCompiler.Compile(expression);
-            context.Add(new QueryComponent(SyntaxComponent.FieldList, fields));
+                .AddFrom()
+                .Add(new QueryComponent(SyntaxComponent.FieldList, LambdaToSqlCompiler.Compile(expression)));
 
             return Kernel.Execute<T1>(context.Components);
         }

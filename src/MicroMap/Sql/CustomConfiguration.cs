@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicroMap.TMP
+namespace MicroMap.Sql
 {
     public static class CustomConfiguration
     {
@@ -14,16 +14,16 @@ namespace MicroMap.TMP
             StripUpperInLike = true;
         }
 
-        static bool? treatEnumAsInteger;
+        static bool? _treatEnumAsInteger;
         public static bool TreatEnumAsInteger
         {
             get
             {
-                return treatEnumAsInteger != null ? treatEnumAsInteger.Value : false;
+                return _treatEnumAsInteger != null ? _treatEnumAsInteger.Value : false;
             }
             set
             {
-                treatEnumAsInteger = value;
+                _treatEnumAsInteger = value;
             }
         }
 

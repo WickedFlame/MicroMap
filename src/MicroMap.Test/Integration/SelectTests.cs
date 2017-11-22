@@ -73,6 +73,48 @@ namespace MicroMap.UnitTest.Integration
                 // SELECT ID as IDs FROM Awesome WHERE Awesome.ID = 1
 
                 Assert.That(one.First().IDs == 1);
+                Assert.That(one.First(), Is.TypeOf<Awesome2>());
+            }
+        }
+
+        [Test]
+        public void Micromap_Integration_Select_WithTypeConverterAndConstraint()
+        {
+            var provider = new DatabaseConnection(_dbManager.ConnectionString);
+            using (var context = provider.Open())
+            {
+                var one = context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(a => new Awesome2 { IDs = a.ID});
+                // SELECT ID as IDs FROM Awesome WHERE Awesome.ID = 1
+
+                Assert.That(one.First().IDs == 1);
+                Assert.That(one.First(), Is.TypeOf<Awesome2>());
+            }
+        }
+
+        [Test]
+        public void Micromap_Integration_Select_WithAnonymConverterAndConstraint()
+        {
+            var provider = new DatabaseConnection(_dbManager.ConnectionString);
+            using (var context = provider.Open())
+            {
+                var one = context.From<Awesome>(a => a.ID == 1).Select(a => new { IDs = a.ID });
+                // SELECT ID as IDs FROM Awesome WHERE Awesome.ID = 1
+
+                Assert.That(one.First().IDs == 1);
+            }
+        }
+
+        [Test]
+        public void Micromap_Integration_Select_WithAnonymConverterToTypeAndConstraint()
+        {
+            var provider = new DatabaseConnection(_dbManager.ConnectionString);
+            using (var context = provider.Open())
+            {
+                var one = context.From<Awesome>(a => a.ID == 1).Select<Awesome2>(a => new { IDs = a.ID });
+                // SELECT ID as IDs FROM Awesome WHERE Awesome.ID = 1
+
+                Assert.That(one.First().IDs == 1);
+                Assert.That(one.First(), Is.TypeOf<Awesome2>());
             }
         }
 

@@ -74,7 +74,6 @@
     <Compile Include="TMP\Mapper\TypeExtensions.cs" />
     <Compile Include="TMP\Settings.cs" />
     <Compile Include="TMP\TypeDefinition\FieldDefinition.cs" />
-    <Compile Include="Sql\BaseDialectProvider.cs" />
     <Compile Include="Sql\CustomConfiguration.cs" />
     <Compile Include="Sql\DialectProvider.cs" />
     <Compile Include="Sql\EnumMemberAccess.cs" />

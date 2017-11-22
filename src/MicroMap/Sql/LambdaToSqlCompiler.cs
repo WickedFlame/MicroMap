@@ -12,14 +12,18 @@ namespace MicroMap.Sql
 {
     public static class LambdaToSqlCompiler
     {
-        static LambdaCompiler instance;
+        private static LambdaCompiler _instance;
+
         public static LambdaCompiler Instance
         {
             get
             {
-                if (instance == null)
-                    instance = new LambdaCompiler();
-                return instance;
+                if (_instance == null)
+                {
+                    _instance = new LambdaCompiler();
+                }
+
+                return _instance;
             }
         }
         
